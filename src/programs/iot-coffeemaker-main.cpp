@@ -85,43 +85,9 @@ void setup(){
         // no error
     }
     publishWatch.restart();
-    // Json:
-    jsonDoc["ButtonCoffeeLeft"] = false;
-    jsonDoc["ButtonCoffeeRight"] = false;
-    jsonDoc["SliderPosition"] = "None";
-    jsonDoc["LightLeft"] = "OFF";
-    jsonDoc["LightRight"] = "OFF";
-    jsonDoc["WaterSwitch"] = false;
-    jsonDoc["Timestamp"] = ntpHandler.getFormattedTime();
-    //
-    ESP_LOGI(ESP_LOG_TAG, "end of setup()");
+   
 }
 
 void loop() {
-    adcConverter.update();
-    buttonCoffeeLeft.update();
-    buttonCoffeeRight.update();
-    buttonSliderLeft.update();
-    buttonSliderRight.update();
-    sensorLightLeft.update(adcConverter, LIGHT_LEFT_CHANNEL);
-    sensorLightRight.update(adcConverter, LIGHT_RIGHT_CHANNEL);
-    switchWaterLevel.update(adcConverter, WATER_LEVEL_CHANNEL);
-    slider.update(buttonSliderLeft.isPressed(), buttonSliderRight.isPressed());
-    mqttHandler.update();
-    ntpHandler.update();
-
-    if (publishWatch.getTimeSinceStart() >= PUBLISH_INTERVAL_MILLIS) {
-        ESP_LOGI(ESP_LOG_TAG, "Cycletime: %ims", publishWatch.getTimeSinceStart());
-        publishWatch.restart();
-        // update jsonDoc:
-        jsonDoc["ButtonCoffeeLeft"] = buttonCoffeeLeft.isPressed();
-        jsonDoc["ButtonCoffeeRight"] = buttonCoffeeRight.isPressed();
-        jsonDoc["SliderPosition"] = slider.getStateAsString();
-        jsonDoc["LightLeft"] = sensorLightLeft.getStateString();
-        jsonDoc["LightRight"] = sensorLightRight.getStateString();
-        jsonDoc["WaterSwitch"] = switchWaterLevel.getState();
-        jsonDoc["Timestamp"] = ntpHandler.getFormattedTime();
-        // publish:
-        mqttHandler.publish(PUBLISH_TOPIC, jsonDoc);
-    }
+    
 }
