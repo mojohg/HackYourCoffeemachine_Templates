@@ -1,0 +1,21 @@
+# IOT Coffeemaker
+
+## Windows NTP Time Server:
+Use the following tutorial:
+https://support.hpe.com/techlib/docs/otlink-wo/How-to-Configure-a-Local-NTP-Server.html
+
+Make sure that the inwards port 123 is open for the ntp server.
+
+
+## WIFI credentials:
+The wifi credentials are exluded from the version control. To use these programs do the following steps:
+
+1. add a the file "src/wifiCredentials.h"
+2. add the following to the file:
+    ```
+    #pragma once
+
+    const char* WIFI_SSID = "my_wifi_name";
+    const char* WIFI_PWD = "my_secure_password";
+    ```
+3. replace `my_wifi_name` and `my_secure_password` with your wifi credentials.
