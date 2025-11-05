@@ -24,10 +24,10 @@ static const char* ESP_LOG_TAG = "ESP";
 
 // ---------- MQTT (JETZT mit Host + Credentials) ----------
 static MqttHandler mqtt("IOT-Coffeemaker");
-static const char*   MQTT_BROKER_HOST   = "mqtt.i40-iaam.de";   // <- anpassen
+static const char*   MQTT_BROKER_HOST   = "****";   // <- anpassen
 static const uint16_t MQTT_BROKER_PORT  = 1883;
-static const char*   MQTT_USER          = "i40";             // <- anpassen
-static const char*   MQTT_PASSWORD      = "123lalelu";         // <- anpassen
+static const char*   MQTT_USER          = "****";             // <- anpassen
+static const char*   MQTT_PASSWORD      = "****";         // <- anpassen
 static const char*   PUBLISH_TOPIC      = "State";
 static const uint32_t PUBLISH_INTERVAL_MS = 500;
 static Stopwatch32MS publishWatch;
