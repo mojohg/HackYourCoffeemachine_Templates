@@ -1,4 +1,3 @@
-// ... deine Includes bleiben ...
 #include <ArduinoJson.h>
 #include <arduino_stopwatch.h>
 #include "esp_log.h"
