@@ -14,13 +14,13 @@ class CoffeeEnergyLogger:
         self.PORT = 1883
 
         # Topics (pass bei Bedarf an)
-        self.TOPIC_COFFEE  = "bipfinnland/hackyourcoffee11/data"
-        self.TOPIC_ENERGY  = "bipfinnland/monitoring11/data"
-        self.TOPIC_CONTROL = "bipfinnland/monitoring11/control"
+        self.TOPIC_COFFEE  = "Group-A/Coffeemachine/data"
+        self.TOPIC_ENERGY  = "Group-A/status"
+        self.TOPIC_CONTROL = "Group-A/Coffemachine/control"
 
         # CSVs
-        self.COFFEE_DB = "coffee_data.csv"      # timestamp,label,info
-        self.ENERGY_DB = "energy_log.csv"       # ts_shelly,current_A
+        self.COFFEE_DB = "coffee_data_1.csv"      # timestamp,label,info
+        self.ENERGY_DB = "energy_log_1.csv"       # ts_shelly,current_A
 
         # Zustand
         self.saving_data = False
@@ -74,6 +74,7 @@ class CoffeeEnergyLogger:
 
     async def handle_energy(self, message):
         # nur loggen, wenn aktiv
+        print("Data")
         if not self.saving_data:
             return
         try:
@@ -95,24 +96,30 @@ class CoffeeEnergyLogger:
 
         print(f"[ENERGY] ts={ts}  current={current} A")
 
-    # ---------- Main ----------
+
+    async def evaluation_message_incoming(self, message, topic):
+        if topic == self.TOPIC_CONTROL:
+            await self.handle_control(message)
+        elif topic == self.TOPIC_COFFEE:
+            await self.handle_label(message)
+        elif topic == self.TOPIC_ENERGY:
+            await self.handle_energy(message)
+
+    async def subscribe_and_listen(self, client, topic):
+        await client.subscribe(topic)
+        async for message in client.messages:
+            await self.evaluation_message_incoming(message, topic)
 
     async def main(self):
-        async with Client(hostname=self.BROKER, port=self.PORT) as client:
-            # alle drei Topics
-            await client.subscribe(self.TOPIC_COFFEE)
-            await client.subscribe(self.TOPIC_ENERGY)
-            await client.subscribe(self.TOPIC_CONTROL)
-            print("[INFO] subscribed to topics")
-
-            async for message in client.messages:
-                t = message.topic
-                if t == self.TOPIC_CONTROL:
-                    await self.handle_control(message)
-                elif t == self.TOPIC_COFFEE:
-                    await self.handle_coffee(message)
-                elif t == self.TOPIC_ENERGY:
-                    await self.handle_energy(message)
+        async with Client(hostname=self.BROKER, port=self.PORT) as client1, \
+                   Client(hostname=self.BROKER, port=self.PORT) as client2, \
+                   Client(hostname=self.BROKER, port=self.PORT) as client3:
+            tasks = [
+                self.subscribe_and_listen(client1, self.TOPIC_ENERGY),
+                self.subscribe_and_listen(client2, self.TOPIC_COFFEE),
+                self.subscribe_and_listen(client3, self.TOPIC_CONTROL)
+            ]
+            await asyncio.gather(*tasks)
 
 if __name__ == "__main__":
     # Windows Event Loop Fix
